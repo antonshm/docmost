@@ -34,11 +34,30 @@ const red: MantineColorsTuple = [
   "#93151b",
 ];
 
+// ЦТиП brand palette (styles/colors.css, "Бренд · emerald"). Shades 2 and 4
+// are interpolated between their neighbors — the source palette only defines
+// 50/100/300/500/600/700/800/900; Mantine requires all 10 steps.
+const emerald: MantineColorsTuple = [
+  "#EDF5F1", // em-50
+  "#D4E8E1", // em-100
+  "#AAD5CA", // interpolated (em-100 → em-300)
+  "#7FC2B3", // em-300
+  "#4AB29D", // interpolated (em-300 → em-500)
+  "#14A287", // em-500
+  "#0F8A72", // em-600
+  "#0A6E5C", // em-700 — brand primary
+  "#07503F", // em-800
+  "#053B30", // em-900
+];
+
 export const theme = createTheme({
   colors: {
     blue,
     red,
+    emerald,
   },
+  primaryColor: "emerald",
+  primaryShade: 7,
   defaultRadius: 'sm',
   components: {
     Tooltip: Tooltip.extend({
@@ -91,7 +110,8 @@ export const mantineCssResolver: CSSVariablesResolver = (theme) => ({
   },
   light: {
     ...v8CssVariablesResolver(theme).light,
-    "--mantine-color-dimmed": "#4b5563",
+    // ЦТиП brand neutrals (styles/colors.css): ink-500 dimmed text.
+    "--mantine-color-dimmed": "#5C6663",
     "--mantine-color-dark-light-color": "#4e5359",
     "--mantine-color-dark-light-hover": "var(--mantine-color-gray-light-hover)",
     // Override the semantic error color so input error text / borders /

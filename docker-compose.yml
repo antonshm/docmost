@@ -1,12 +1,12 @@
 services:
   docmost:
-    image: docmost/docmost:latest
+    build: .
     depends_on:
       - db
       - redis
     environment:
       APP_URL: 'http://localhost:3000'
-      APP_SECRET: 'REPLACE_WITH_LONG_SECRET'
+      APP_SECRET: '4c9d8d48a87c874c195a6273447cb1a58165350dedb04ca5a8f0bdf846bb51bb'
       DATABASE_URL: 'postgresql://docmost:STRONG_DB_PASSWORD@db:5432/docmost'
       REDIS_URL: 'redis://redis:6379'
     ports:

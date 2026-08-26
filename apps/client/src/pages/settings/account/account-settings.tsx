@@ -8,9 +8,12 @@ import { useTranslation } from "react-i18next";
 import { AccountMfaSection } from "@/features/user/components/account-mfa-section";
 import SessionList from "@/features/session/components/session-list";
 import { DocumentTitle } from "@/components/ui/document-title.tsx";
+import { useHasFeature } from "@/ee/hooks/use-feature";
+import { Feature } from "@/ee/features";
 
 export default function AccountSettings() {
   const { t } = useTranslation();
+  const hasMfa = useHasFeature(Feature.MFA);
 
   return (
     <>
@@ -29,9 +32,12 @@ export default function AccountSettings() {
 
       <ChangePassword />
 
-      <Divider my="lg" />
-
-      <AccountMfaSection />
+      {hasMfa && (
+        <>
+          <Divider my="lg" />
+          <AccountMfaSection />
+        </>
+      )}
 
       <Divider my="lg" />
 

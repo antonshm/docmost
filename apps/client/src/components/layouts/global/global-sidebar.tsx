@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollArea, Text, Divider, Modal, UnstyledButton, Tooltip } from "@mantine/core";
+import { ScrollArea, Text, Divider, Modal, UnstyledButton } from "@mantine/core";
 import {
   IconHome,
   IconClock,
@@ -23,7 +23,6 @@ import { CustomAvatar } from "@/components/ui/custom-avatar";
 import { AvatarIconType } from "@/features/attachments/types/attachment.types";
 import { useHasFeature } from "@/ee/hooks/use-feature";
 import { Feature } from "@/ee/features";
-import { useUpgradeLabel } from "@/ee/hooks/use-upgrade-label";
 
 export default function GlobalSidebar() {
   const { t } = useTranslation();
@@ -32,7 +31,6 @@ export default function GlobalSidebar() {
   const [mobileSidebarOpened] = useAtom(mobileSidebarAtom);
   const toggleMobileSidebar = useToggleSidebar(mobileSidebarAtom);
   const hasTemplates = useHasFeature(Feature.TEMPLATES);
-  const upgradeLabel = useUpgradeLabel();
   const mainNavItems = [
     { label: "Home", icon: IconHome, path: "/home" },
     { label: "Favorites", icon: IconStar, path: "/favorites" },
@@ -69,25 +67,9 @@ export default function GlobalSidebar() {
     <div className={classes.navbar}>
       <ScrollArea w="100%" style={{ flex: 1 }}>
         <div className={classes.section}>
-          {mainNavItems.map((item) =>
-            item.disabled ? (
-              <Tooltip
-                key={item.label}
-                label={upgradeLabel}
-                position="right"
-                withArrow
-              >
-                <UnstyledButton
-                  className={classes.link}
-                  data-disabled
-                  aria-disabled="true"
-                  tabIndex={-1}
-                >
-                  <item.icon className={classes.linkIcon} stroke={2} />
-                  <span>{t(item.label)}</span>
-                </UnstyledButton>
-              </Tooltip>
-            ) : (
+          {mainNavItems
+            .filter((item) => !item.disabled)
+            .map((item) => (
               <Link
                 key={item.label}
                 className={classes.link}
@@ -99,8 +81,7 @@ export default function GlobalSidebar() {
                 <item.icon className={classes.linkIcon} stroke={2} />
                 <span>{t(item.label)}</span>
               </Link>
-            ),
-          )}
+            ))}
         </div>
 
         <Divider my="xs" />

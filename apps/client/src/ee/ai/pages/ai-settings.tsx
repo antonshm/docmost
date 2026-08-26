@@ -8,11 +8,9 @@ import EnableAiChat from "@/ee/ai-chat/components/enable-ai-chat.tsx";
 import AiChatReadOnly from "@/ee/ai-chat/components/ai-chat-read-only.tsx";
 import AiChatWorkspaceKnowledgeOnly from "@/ee/ai-chat/components/ai-chat-workspace-knowledge-only.tsx";
 import McpSettings from "@/ee/ai/components/mcp-settings.tsx";
-import { Alert, Collapse, Stack, Tabs } from "@mantine/core";
-import { IconInfoCircle } from "@tabler/icons-react";
+import { Collapse, Stack, Tabs } from "@mantine/core";
 import { useHasFeature } from "@/ee/hooks/use-feature";
 import { Feature } from "@/ee/features";
-import { useUpgradeLabel } from "@/ee/hooks/use-upgrade-label";
 import { isCloud } from "@/lib/config.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DocumentTitle } from "@/components/ui/document-title.tsx";
@@ -22,8 +20,7 @@ import { workspaceAtom } from "@/features/user/atoms/current-user-atom.ts";
 export default function AiSettings() {
   const { t } = useTranslation();
   const { isAdmin } = useUserRole();
-  const hasAccess = useHasFeature(Feature.AI);
-  const upgradeLabel = useUpgradeLabel();
+  const hasMcpAccess = useHasFeature(Feature.MCP);
   const workspace = useAtomValue(workspaceAtom);
   const aiChatEnabled = workspace?.settings?.ai?.chat === true;
   const location = useLocation();
@@ -53,25 +50,14 @@ export default function AiSettings() {
           <Tabs.Tab fw={500} value="ai">
             {t("AI")}
           </Tabs.Tab>
-          <Tabs.Tab fw={500} value="mcp">
-            {t("MCP")}
-          </Tabs.Tab>
+          {hasMcpAccess && (
+            <Tabs.Tab fw={500} value="mcp">
+              {t("MCP")}
+            </Tabs.Tab>
+          )}
         </Tabs.List>
 
         <Tabs.Panel value="ai" pt="md">
-          {!hasAccess && (
-            <Alert
-              icon={<IconInfoCircle />}
-              title={upgradeLabel}
-              color="blue"
-              mb="lg"
-            >
-              {t(
-                "AI is available in the Docmost paid editions. Contact sales@docmost.com.",
-              )}
-            </Alert>
-          )}
-
           <Stack gap="md">
             {!isCloud() && <EnableAiSearch />}
             <EnableGenerativeAi />

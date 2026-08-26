@@ -45,6 +45,9 @@ export default function Security() {
   const { isAdmin } = useUserRole();
   const hasCustomSso = useHasFeature(Feature.SSO_CUSTOM);
   const hasScim = useHasFeature(Feature.SCIM);
+  const hasMfa = useHasFeature(Feature.MFA);
+  const hasSharingControls = useHasFeature(Feature.SHARING_CONTROLS);
+  const hasRetention = useHasFeature(Feature.RETENTION);
   const [workspace] = useAtom(workspaceAtom);
   const isScimEnabled = workspace?.isScimEnabled ?? false;
 
@@ -67,22 +70,37 @@ export default function Security() {
       <DocumentTitle title="Security" />
       <SettingsTitle title={t("Security")} />
 
-      <EnforceMfa />
+      {hasMfa && (
+        <>
+          <EnforceMfa />
+          <Divider my="lg" />
+        </>
+      )}
 
-      <Divider my="lg" />
+      {hasSharingControls && (
+        <>
+          <DisablePublicSharing />
+          <Divider my="lg" />
+        </>
+      )}
 
-      <DisablePublicSharing />
-      <Divider my="lg" />
-
-      <TrashRetention />
-      <Divider my="lg" />
+      {hasRetention && (
+        <>
+          <TrashRetention />
+          <Divider my="lg" />
+        </>
+      )}
 
       <Title order={4} my="lg">
         {t("Single sign-on (SSO)")}
       </Title>
 
-      <EnforceSso />
-      <Divider my="lg" />
+      {hasCustomSso && (
+        <>
+          <EnforceSso />
+          <Divider my="lg" />
+        </>
+      )}
 
       {(isCloud() || hasCustomSso) && (
         <>

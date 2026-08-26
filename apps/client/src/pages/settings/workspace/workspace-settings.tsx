@@ -9,9 +9,14 @@ import AllowMemberTemplates from "@/ee/security/components/allow-member-template
 import WorkspaceDefaultPageEditMode from "@/features/workspace/components/settings/components/workspace-default-page-edit-mode.tsx";
 import PersonalSpacesSetting from "@/ee/personal-space/components/personal-spaces-setting.tsx";
 import { DocumentTitle } from "@/components/ui/document-title.tsx";
+import { useHasFeature } from "@/ee/hooks/use-feature";
+import { Feature } from "@/ee/features";
 
 export default function WorkspaceSettings() {
   const { t } = useTranslation();
+  const hasTemplates = useHasFeature(Feature.TEMPLATES);
+  const hasPersonalSpaces = useHasFeature(Feature.PERSONAL_SPACES);
+
   return (
     <>
       <DocumentTitle title="Workspace Settings" />
@@ -19,11 +24,19 @@ export default function WorkspaceSettings() {
       <WorkspaceIcon />
       <WorkspaceNameForm />
 
-      <Divider my="md" />
-      <AllowMemberTemplates />
+      {hasTemplates && (
+        <>
+          <Divider my="md" />
+          <AllowMemberTemplates />
+        </>
+      )}
 
-      <Divider my="md" />
-      <PersonalSpacesSetting />
+      {hasPersonalSpaces && (
+        <>
+          <Divider my="md" />
+          <PersonalSpacesSetting />
+        </>
+      )}
 
       {isCloud() && (
         <>

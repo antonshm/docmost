@@ -1,14 +1,5 @@
 import { useState } from "react";
-import {
-  Button,
-  Indicator,
-  Loader,
-  Modal,
-  Stack,
-  Tabs,
-  Text,
-  Center,
-} from "@mantine/core";
+import { Button, Indicator, Loader, Modal, Tabs, Center } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconWorld, IconLock } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
@@ -86,56 +77,54 @@ export function PageShareModal({ readOnly }: PageShareModalProps) {
         size={600}
         closeButtonProps={{ "aria-label": t("Close") }}
       >
-        <Tabs value={activeTab} color="dark" onChange={setActiveTab}>
-          <Tabs.List mb="md">
-            <Tabs.Tab value="access">{t("Access")}</Tabs.Tab>
-            <Tabs.Tab
-              value="publish"
-              rightSection={
-                isPubliclyShared ? (
-                  <Indicator color="green" size={8} processing />
-                ) : null
-              }
-            >
-              {t("Publish")}
-            </Tabs.Tab>
-          </Tabs.List>
+        {hasPagePermissions ? (
+          <Tabs value={activeTab} color="dark" onChange={setActiveTab}>
+            <Tabs.List mb="md">
+              <Tabs.Tab value="access">{t("Access")}</Tabs.Tab>
+              <Tabs.Tab
+                value="publish"
+                rightSection={
+                  isPubliclyShared ? (
+                    <Indicator color="green" size={8} processing />
+                  ) : null
+                }
+              >
+                {t("Publish")}
+              </Tabs.Tab>
+            </Tabs.List>
 
-          <Tabs.Panel value="access">
-            {!hasPagePermissions ? (
-              <Stack align="center" py="md">
-                <IconLock size={20} stroke={1.5} />
-                <Text size="sm" ta="center" fw={500}>
-                  {t("Page permissions")}
-                </Text>
-                <Text size="sm" c="dimmed" ta="center">
-                  {t(
-                    "Control who can view and edit individual pages. Available with an enterprise license.",
-                  )}
-                </Text>
-              </Stack>
-            ) : restrictionLoading || !pageId || !restrictionInfo ? (
-              <Center py="xl">
-                <Loader size="sm" />
-              </Center>
-            ) : (
-              <PagePermissionTab
+            <Tabs.Panel value="access">
+              {restrictionLoading || !pageId || !restrictionInfo ? (
+                <Center py="xl">
+                  <Loader size="sm" />
+                </Center>
+              ) : (
+                <PagePermissionTab
+                  pageId={pageId}
+                  restrictionInfo={restrictionInfo}
+                />
+              )}
+            </Tabs.Panel>
+
+            <Tabs.Panel value="publish">
+              <PublishTab
                 pageId={pageId}
-                restrictionInfo={restrictionInfo}
+                readOnly={readOnly}
+                isRestricted={isRestricted}
+                workspaceSharingDisabled={workspaceSharingDisabled}
+                spaceSharingDisabled={spaceSharingDisabled}
               />
-            )}
-          </Tabs.Panel>
-
-          <Tabs.Panel value="publish">
-            <PublishTab
-              pageId={pageId}
-              readOnly={readOnly}
-              isRestricted={isRestricted}
-              workspaceSharingDisabled={workspaceSharingDisabled}
-              spaceSharingDisabled={spaceSharingDisabled}
-            />
-          </Tabs.Panel>
-        </Tabs>
+            </Tabs.Panel>
+          </Tabs>
+        ) : (
+          <PublishTab
+            pageId={pageId}
+            readOnly={readOnly}
+            isRestricted={isRestricted}
+            workspaceSharingDisabled={workspaceSharingDisabled}
+            spaceSharingDisabled={spaceSharingDisabled}
+          />
+        )}
       </Modal>
     </>
   );
