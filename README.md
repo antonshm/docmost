@@ -10,6 +10,8 @@
 </div>
 <br />
 
+> Форк для ЦТиП — кастомизация под внутреннюю CRM+WIKI команды.
+
 ## Getting started
 
 To get started with Docmost, please refer to our [documentation](https://docmost.com/docs) or try our [cloud version](https://docmost.com/pricing) .
