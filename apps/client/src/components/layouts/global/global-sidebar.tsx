@@ -84,11 +84,11 @@ export default function GlobalSidebar() {
             ))}
         </div>
 
-        <Divider my="xs" />
+        <Divider my="xs" color="var(--shell-border)" />
         <div className={classes.section}>
           <Text component="h2" className={classes.sectionHeader}>{t("Favorite spaces")}</Text>
           {!isFavoritesPending && sortedFavoriteSpaces.length === 0 ? (
-            <Text size="xs" c="dimmed" pl="xs" py={4}>
+            <Text size="xs" className={classes.dimText} pl="xs" py={4}>
               {t("Favorite spaces appear here")}
             </Text>
           ) : (
@@ -119,7 +119,7 @@ export default function GlobalSidebar() {
                   to="/spaces"
                   onClick={handleNavClick}
                 >
-                  <Text size="xs" c="dimmed">
+                  <Text size="xs" className={classes.dimText}>
                     {t("View all")}
                   </Text>
                 </Link>

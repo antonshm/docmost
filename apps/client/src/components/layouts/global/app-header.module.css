@@ -1,18 +1,21 @@
-.header {
-    height: 100%;
-    margin-bottom: rem(120px);
-    background-color: var(--mantine-color-body);
-    border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-    padding-left: var(--mantine-spacing-md);
-    padding-right: var(--mantine-spacing-md);
-}
-
+/*
+  DIRECTION: Bento — see app-shell.module.css's .header for the shell
+  treatment (that's the class actually applied to AppShell.Header; this
+  module's own selectors below style content inside it).
+*/
 .brand {
     display: flex;
     align-items: center;
     text-decoration: none;
     color: inherit;
     cursor: pointer;
+}
+
+/* Bento direction: the wordmark reads as a brandbook eyebrow label. */
+.brand :global(.mantine-Text-root) {
+    font-family: var(--mantine-font-family-monospace);
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 .brandIcon {
@@ -23,17 +26,18 @@
 .link {
     display: block;
     line-height: 1;
-    padding: rem(8px) rem(12px);
-    border-radius: var(--mantine-radius-sm);
+    padding: rem(8px) rem(14px);
+    border-radius: 999px;
     text-decoration: none;
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+    color: var(--shell-text-dim);
     font-size: var(--mantine-font-size-sm);
-    font-weight: 500;
+    font-weight: 700;
     user-select: none;
     white-space: nowrap;
     flex-shrink: 0;
 
-    @mixin hover {
-        background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    &:hover {
+        background-color: var(--shell-hover-bg);
+        color: var(--shell-text);
     }
 }

@@ -34,31 +34,35 @@ const red: MantineColorsTuple = [
   "#93151b",
 ];
 
-// ЦТиП brand palette (styles/colors.css, "Бренд · emerald"). Shades 2 and 4
-// are interpolated between their neighbors — the source palette only defines
-// 50/100/300/500/600/700/800/900; Mantine requires all 10 steps.
-const emerald: MantineColorsTuple = [
-  "#EDF5F1", // em-50
-  "#D4E8E1", // em-100
-  "#AAD5CA", // interpolated (em-100 → em-300)
-  "#7FC2B3", // em-300
-  "#4AB29D", // interpolated (em-300 → em-500)
-  "#14A287", // em-500
-  "#0F8A72", // em-600
-  "#0A6E5C", // em-700 — brand primary
-  "#07503F", // em-800
-  "#053B30", // em-900
+// ЦТиП "Bento" brand system (Projects_Orca/brandbook/ai_team_book.html):
+// mint green accent. Anchors from the brandbook are marked; the rest are
+// interpolated to fill Mantine's required 10 steps.
+const mint: MantineColorsTuple = [
+  "#F1F8F3", // mint-tint (brandbook anchor)
+  "#DCF0E4",
+  "#B8E2C8",
+  "#8ED3A9",
+  "#5FC189",
+  "#34C77B", // mint-soft (brandbook anchor)
+  "#1E9E62", // mint — brand primary (brandbook anchor)
+  "#0E7A46", // deep (brandbook anchor)
+  "#0B5C36", // em-900 compat (brandbook anchor)
+  "#073D24",
 ];
 
 export const theme = createTheme({
   colors: {
     blue,
     red,
-    emerald,
+    mint,
   },
-  primaryColor: "emerald",
-  primaryShade: 7,
+  primaryColor: "mint",
+  primaryShade: { light: 6, dark: 5 },
   defaultRadius: 'sm',
+  // "Bento" direction (see apps/client/PRODUCT.md): Manrope for interface
+  // text, IBM Plex Mono for eyebrows/labels and tabular data.
+  fontFamily: '"Manrope", -apple-system, BlinkMacSystemFont, sans-serif',
+  fontFamilyMonospace: '"IBM Plex Mono", ui-monospace, "SF Mono", monospace',
   components: {
     Tooltip: Tooltip.extend({
       defaultProps: {
@@ -110,8 +114,19 @@ export const mantineCssResolver: CSSVariablesResolver = (theme) => ({
   },
   light: {
     ...v8CssVariablesResolver(theme).light,
-    // ЦТиП brand neutrals (styles/colors.css): ink-500 dimmed text.
-    "--mantine-color-dimmed": "#5C6663",
+    // "Bento" shell tokens (apps/client/PRODUCT.md): the app shell — header
+    // and primary/settings sidebar — reads from these instead of Mantine's
+    // gray scale, so it follows the brandbook exactly in both themes. See
+    // the direction contract in global-sidebar.module.css.
+    "--shell-bg": "#F5F6F4", // brandbook --bg
+    "--shell-active-bg": "#F1F8F3", // brandbook --mint-tint
+    "--shell-hover-bg": "rgba(23,28,24,.05)",
+    "--shell-text": "#171B18", // brandbook --ink
+    "--shell-text-dim": "#6C7470", // brandbook --mut
+    "--shell-accent-text": "#0E7A46", // brandbook --deep
+    "--shell-border": "#E4E7E2", // brandbook --line
+    // ЦТиП brand neutrals: dimmed text matches brandbook --mut.
+    "--mantine-color-dimmed": "#6C7470",
     "--mantine-color-dark-light-color": "#4e5359",
     "--mantine-color-dark-light-hover": "var(--mantine-color-gray-light-hover)",
     // Override the semantic error color so input error text / borders /
@@ -147,6 +162,16 @@ export const mantineCssResolver: CSSVariablesResolver = (theme) => ({
   },
   dark: {
     ...v8CssVariablesResolver(theme).dark,
+    // "Bento" shell tokens, dark theme — same brand language as light
+    // (mint accent, warm-neutral ink), inverted rather than a generic gray
+    // dark mode. Anchored on the brandbook's own "ink-tile" dark accent.
+    "--shell-bg": "#171B18", // brandbook --ink, reused as the dark ground
+    "--shell-active-bg": "rgba(30,158,98,.16)",
+    "--shell-hover-bg": "rgba(255,255,255,.06)",
+    "--shell-text": "#EAEFEA",
+    "--shell-text-dim": "#8C948D",
+    "--shell-accent-text": "#34C77B", // brandbook --mint-soft
+    "--shell-border": "rgba(255,255,255,.09)",
     "--mantine-color-dark-light-color": "var(--mantine-color-gray-4)",
     "--mantine-color-dark-light-hover": "var(--mantine-color-default-hover)",
   },

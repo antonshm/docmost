@@ -1,5 +1,32 @@
-.header, .navbar, .aside {
+.navbar, .aside {
   background-color: light-dark(#f6f7f9, var(--mantine-color-dark-8));
+}
+
+/*
+  DIRECTION: Bento — the header shares the sidebar's --shell-* tokens, so
+  the whole shell is one surface in the brandbook's palette: warm neutral
+  in light mode, ink in dark mode, never a fixed block independent of the
+  app's own theme toggle. This is the element that actually paints the
+  header background (AppShell.Header uses this module's .header via
+  global-app-shell.tsx); see global-sidebar.module.css for the full
+  direction contract.
+*/
+.header {
+  background-color: var(--shell-bg);
+  border-bottom: 1px solid var(--shell-border);
+  color: var(--shell-text);
+
+  /* Re-point the Mantine tokens components inside the header read from
+     (Text's c="dimmed", ActionIcon color="dark"/"gray" variant="subtle",
+     etc.) so stock components resolve correctly here without individual
+     overrides, regardless of the app's own light/dark scheme setting. */
+  --mantine-color-text: var(--shell-text);
+  --mantine-color-dimmed: var(--shell-text-dim);
+  --mantine-color-placeholder: var(--shell-text-dim);
+  --mantine-color-dark-light-color: var(--shell-text-dim);
+  --mantine-color-dark-light-hover: var(--shell-hover-bg);
+  --mantine-color-gray-light-color: var(--shell-text-dim);
+  --mantine-color-gray-light-hover: var(--shell-hover-bg);
 }
 
 .navbar, .aside {

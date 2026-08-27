@@ -1,9 +1,22 @@
+/*
+  DIRECTION: Bento (2026-08-27, apps/client/PRODUCT.md; ai_team_book.html)
+  THESIS: the shell is the brandbook's own light/dark system, not an
+  invented one — a warm neutral ground with pill-shaped mint-tint active
+  states, never a fixed dark block regardless of the app's theme.
+  OWN-WORLD: --shell-* tokens (theme.ts), Manrope labels, IBM Plex Mono for
+  section eyebrows, 999px pill radius on nav rows (matches .nav-link in the
+  brandbook).
+  FINISH: unreviewed and undocumented is unfinished; this build ends with
+  the finish review, the verdict, DESIGN.md, and every shipping raster
+  carrying its provenance.
+*/
 .navbar {
     height: 100%;
     width: 100%;
     padding: var(--mantine-spacing-md);
     display: flex;
     flex-direction: column;
+    background-color: var(--shell-bg);
 }
 
 .section {
@@ -16,19 +29,16 @@
     align-items: center;
     text-decoration: none;
     font-size: var(--mantine-font-size-sm);
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+    color: var(--shell-text-dim);
     padding-left: var(--mantine-spacing-xs);
     min-height: 30px;
-    border-radius: var(--mantine-radius-sm);
-    font-weight: 500;
+    border-radius: 999px;
+    font-weight: 700;
     user-select: none;
 
-    @mixin hover {
-        background-color: light-dark(
-                var(--mantine-color-gray-1),
-                var(--mantine-color-dark-6)
-        );
-        color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+    &:hover {
+        background-color: var(--shell-hover-bg);
+        color: var(--shell-text);
     }
 
     &:focus-visible {
@@ -39,8 +49,12 @@
     &[data-active] {
         &,
         & :hover {
-            background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
-            color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+            background-color: var(--shell-active-bg);
+            color: var(--shell-accent-text);
+        }
+
+        .linkIcon {
+            color: var(--shell-accent-text);
         }
     }
 
@@ -48,15 +62,15 @@
         cursor: not-allowed;
         opacity: 0.5;
 
-        @mixin hover {
+        &:hover {
             background-color: transparent;
-            color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+            color: var(--shell-text-dim);
         }
     }
 }
 
 .linkIcon {
-    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+    color: var(--shell-text-dim);
     margin-right: var(--mantine-spacing-sm);
     width: rem(16px);
     height: rem(16px);
@@ -64,11 +78,16 @@
 
 .sectionHeader {
     padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-    font-size: var(--mantine-font-size-xs);
-    color: var(--mantine-color-dimmed);
-    font-weight: 600;
+    font-family: var(--mantine-font-family-monospace);
+    font-size: 10px;
+    color: var(--shell-text-dim);
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.1em;
+}
+
+.dimText {
+    color: var(--shell-text-dim);
 }
 
 .spacer {
@@ -77,7 +96,7 @@
 
 .bottomSection {
     padding-top: var(--mantine-spacing-xs);
-    border-top: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+    border-top: rem(1px) solid var(--shell-border);
 }
 
 .spaceItem {
@@ -87,19 +106,16 @@
     gap: var(--mantine-spacing-sm);
     text-decoration: none;
     font-size: var(--mantine-font-size-sm);
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+    color: var(--shell-text-dim);
     padding-left: var(--mantine-spacing-xs);
     min-height: 30px;
-    border-radius: var(--mantine-radius-sm);
-    font-weight: 500;
+    border-radius: 999px;
+    font-weight: 700;
     user-select: none;
 
-    @mixin hover {
-        background-color: light-dark(
-                var(--mantine-color-gray-1),
-                var(--mantine-color-dark-6)
-        );
-        color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+    &:hover {
+        background-color: var(--shell-hover-bg);
+        color: var(--shell-text);
     }
 
     &:focus-visible {

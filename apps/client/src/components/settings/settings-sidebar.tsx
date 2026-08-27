@@ -161,7 +161,7 @@ export default function SettingsSidebar() {
   const menuItems = groupedData.map((group) => {
     return (
       <div key={group.heading}>
-        <Text c="dimmed" className={classes.linkHeader}>
+        <Text className={classes.linkHeader}>
           {t(group.heading)}
         </Text>
         {group.items.map((item) => {
@@ -245,7 +245,7 @@ export default function SettingsSidebar() {
             }
           }}
           variant="transparent"
-          c="gray"
+          style={{ color: "var(--shell-text-dim)" }}
           aria-label={t("Back")}
         >
           <IconArrowLeft stroke={2} />

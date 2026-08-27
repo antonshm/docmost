@@ -1,14 +1,20 @@
+/* DIRECTION: Bento — see global-sidebar.module.css for the contract. */
 .navbar {
     height: 100%;
     width: 100%;
     padding: var(--mantine-spacing-md);
     display: flex;
     flex-direction: column;
+    background-color: var(--shell-bg);
 }
 
 .title {
     padding-bottom: var(--mantine-spacing-sm);
-    border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+    border-bottom: rem(1px) solid var(--shell-border);
+}
+
+.title :global(.mantine-Text-root) {
+    color: var(--shell-text);
 }
 
 .link {
@@ -17,32 +23,33 @@
     align-items: center;
     text-decoration: none;
     font-size: var(--mantine-font-size-sm);
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+    color: var(--shell-text-dim);
     padding-left: var(--mantine-spacing-xs) ;
     min-height: 30px;
-    border-radius: var(--mantine-radius-sm);
-    font-weight: 500;
+    border-radius: 999px;
+    font-weight: 700;
     user-select: none;
 
-    @mixin hover {
-        background-color: light-dark(
-                var(--mantine-color-gray-1),
-                var(--mantine-color-dark-6)
-        );
-        color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+    &:hover {
+        background-color: var(--shell-hover-bg);
+        color: var(--shell-text);
     }
 
     &[data-active] {
         &,
         & :hover {
-            background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
-            color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+            background-color: var(--shell-active-bg);
+            color: var(--shell-accent-text);
+        }
+
+        .linkIcon {
+            color: var(--shell-accent-text);
         }
     }
 }
 
 .linkIcon {
-    color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+    color: var(--shell-text-dim);
     margin-right: var(--mantine-spacing-sm);
     width: rem(16px);
     height: rem(16px);
@@ -50,9 +57,12 @@
 
 .linkHeader {
     padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-    font-size: var(--mantine-font-size-sm);
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+    font-family: var(--mantine-font-family-monospace);
+    font-size: 10px;
+    color: var(--shell-text-dim);
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -61,4 +71,8 @@
 .text {
     padding-left: var(--mantine-spacing-xs) ;
     padding-top: 10px;
+}
+
+.text :global(.mantine-Text-root) {
+    color: var(--shell-text-dim);
 }
