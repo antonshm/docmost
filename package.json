@@ -1,6 +1,6 @@
 {
-  "name": "docmost",
-  "homepage": "https://docmost.com",
+  "name": "digtp",
+  "homepage": "https://github.com/antonshm/docmost",
   "version": "0.95.0",
   "private": true,
   "scripts": {

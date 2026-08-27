@@ -1,5 +1,5 @@
 services:
-  docmost:
+  digtp:
     build: .
     depends_on:
       - db
