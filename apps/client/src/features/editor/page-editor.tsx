@@ -69,13 +69,21 @@ import { useDebouncedCallback, useDocumentVisibility } from "@mantine/hooks";
 import { useIdle } from "@/hooks/use-idle.ts";
 import { queryClient } from "@/main.tsx";
 import { IPage } from "@/features/page/types/page.types.ts";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { extractPageSlugId, platformModifierKey } from "@/lib";
 import { FIVE_MINUTES } from "@/lib/constants.ts";
 import { PageEditMode } from "@/features/user/types/user.types.ts";
 import { jwtDecode } from "jwt-decode";
 import { searchSpotlight } from "@/features/search/constants.ts";
 import { useEditorScroll } from "./hooks/use-editor-scroll";
+import { notifications } from "@mantine/notifications";
+import { v7 as uuid7 } from "uuid";
+import { useCreatePageMutation } from "@/features/page/queries/page-query";
+import { useQueryEmit } from "@/features/websocket/use-query-emit";
+import { treeDataAtom } from "@/features/page/tree/atoms/tree-data-atom";
+import { treeModel } from "@/features/page/tree/model/tree-model";
+import { SpaceTreeNode } from "@/features/page/tree/types";
+import { getPageTitle, buildPageUrl } from "@/features/page/page.utils";
 import { EditorAiMenu } from "@/ee/ai/components/editor/ai-menu/ai-menu";
 import { EditorLinkMenu } from "@/features/editor/components/link/link-menu";
 import ColumnsMenu from "@/features/editor/components/columns/columns-menu.tsx";
@@ -89,6 +97,8 @@ import {
 
 interface PageEditorProps {
   pageId: string;
+  spaceId?: string;
+  spaceSlug?: string;
   editable: boolean;
   content: any;
   canComment?: boolean;
@@ -96,6 +106,8 @@ interface PageEditorProps {
 
 export default function PageEditor({
   pageId,
+  spaceId,
+  spaceSlug,
   editable,
   content,
   canComment,
@@ -154,6 +166,8 @@ export default function PageEditor({
           >
             <CollabPageEditor
               pageId={pageId}
+              spaceId={spaceId}
+              spaceSlug={spaceSlug}
               editable={editable}
               content={content}
               canComment={canComment}
@@ -169,11 +183,17 @@ export default function PageEditor({
 
 function CollabPageEditor({
   pageId,
+  spaceId,
+  spaceSlug,
   editable,
   content,
   canComment,
 }: PageEditorProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const createPageMutation = useCreatePageMutation();
+  const emitQuery = useQueryEmit();
+  const [treeData, setTreeData] = useAtom(treeDataAtom);
   const provider = useHocuspocusProvider();
   const isComponentMounted = useRef(false);
   const editorRef = useRef<Editor | null>(null);
@@ -206,6 +226,95 @@ function CollabPageEditor({
     [isComponentMounted],
   );
   const { handleScrollTo } = useEditorScroll({ canScroll });
+
+  // Notion-style "/page": create a child page and drop a link to it at the
+  // given range, then jump into the new page for editing. Exposed via
+  // editor.storage (see the pageId wiring below) because slash-menu commands
+  // are plain functions with no access to hooks like useNavigate.
+  const createSubpage = useCallback(
+    (range?: { from: number; to: number }) => {
+      const editorInstance = editorRef.current;
+      if (!editorInstance || !spaceId) return;
+
+      if (range) {
+        editorInstance.chain().focus().deleteRange(range).run();
+      }
+      const insertPos = range ? range.from : editorInstance.state.selection.from;
+
+      (async () => {
+        try {
+          const payload: { spaceId: string; parentPageId?: string; title: string } =
+            {
+              spaceId,
+              parentPageId: pageId,
+              title: "",
+            };
+          const createdPage = await createPageMutation.mutateAsync(payload);
+
+          const newNode: SpaceTreeNode = {
+            id: createdPage.id,
+            slugId: createdPage.slugId,
+            name: createdPage.title,
+            position: createdPage.position,
+            spaceId: createdPage.spaceId,
+            parentPageId: createdPage.parentPageId,
+            hasChildren: false,
+            children: [],
+          };
+          const lastIndex = treeData.length;
+          setTreeData(treeModel.insert(treeData, pageId, newNode, lastIndex));
+
+          setTimeout(() => {
+            emitQuery({
+              operation: "addTreeNode",
+              spaceId,
+              payload: { parentId: pageId, index: lastIndex, data: newNode },
+            });
+          }, 50);
+
+          editorInstance
+            .chain()
+            .focus()
+            .insertContentAt(insertPos, [
+              {
+                type: "mention",
+                attrs: {
+                  id: uuid7(),
+                  label: getPageTitle(createdPage.title, createdPage.isBase, t),
+                  entityType: "page",
+                  entityId: createdPage.id,
+                  slugId: createdPage.slugId,
+                  creatorId: currentUser?.user.id,
+                },
+              },
+              { type: "text", text: " " },
+            ])
+            .run();
+
+          if (spaceSlug) {
+            navigate(buildPageUrl(spaceSlug, createdPage.slugId, createdPage.title));
+          }
+        } catch (err) {
+          notifications.show({
+            color: "red",
+            message: t("Failed to create page"),
+          });
+        }
+      })();
+    },
+    [
+      spaceId,
+      spaceSlug,
+      pageId,
+      treeData,
+      setTreeData,
+      emitQuery,
+      navigate,
+      createPageMutation,
+      currentUser,
+      t,
+    ],
+  );
 
   useEffect(() => {
     const local = new IndexeddbPersistence(
@@ -344,6 +453,8 @@ function CollabPageEditor({
           setEditor(editor);
           // @ts-ignore
           editor.storage.pageId = pageId;
+          // @ts-ignore
+          editor.storage.createSubpage = createSubpage;
           handleScrollTo(editor);
           editorRef.current = editor;
         }
@@ -364,9 +475,11 @@ function CollabPageEditor({
       setEditor(editor);
       // @ts-ignore
       editor.storage.pageId = pageId;
+      // @ts-ignore
+      editor.storage.createSubpage = createSubpage;
       editorRef.current = editor;
     }
-  }, [editor, pageId, setEditor]);
+  }, [editor, pageId, setEditor, createSubpage]);
 
   const editorIsEditable = useEditorState({
     editor,

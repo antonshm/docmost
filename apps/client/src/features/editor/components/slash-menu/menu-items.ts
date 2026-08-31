@@ -16,6 +16,7 @@ import {
   IconMusic,
   IconPaperclip,
   IconFileTypePdf,
+  IconFilePlus,
   IconPhoto,
   IconTable,
   IconTypography,
@@ -548,6 +549,23 @@ const CommandGroups: SlashMenuGroupedItemsType = {
       icon: IconMoodSmile,
       command: ({ editor, range }: CommandProps) => {
         editor.chain().focus().deleteRange(range).insertContent(":").run();
+      },
+    },
+    {
+      title: "Page",
+      description: "Create a new subpage and open it for editing.",
+      searchTerms: [
+        "page",
+        "subpage",
+        "new page",
+        "child page",
+        "link",
+        "notion",
+      ],
+      icon: IconFilePlus,
+      command: ({ editor, range }: CommandProps) => {
+        // @ts-ignore
+        editor.storage.createSubpage?.(range);
       },
     },
     {

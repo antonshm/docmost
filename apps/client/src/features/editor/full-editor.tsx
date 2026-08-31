@@ -48,6 +48,7 @@ export interface FullEditorProps {
   slugId: string;
   title: string;
   content: string;
+  spaceId?: string;
   spaceSlug: string;
   editable: boolean;
   creator?: PageUser;
@@ -60,6 +61,7 @@ export function FullEditor({
   title,
   slugId,
   content,
+  spaceId,
   spaceSlug,
   editable,
   creator,
@@ -111,6 +113,8 @@ export function FullEditor({
       />
       <MemoizedPageEditor
         pageId={pageId}
+        spaceId={spaceId}
+        spaceSlug={spaceSlug}
         editable={editable}
         content={content}
         canComment={canComment}
