@@ -49,8 +49,21 @@ export default function Breadcrumb() {
     }
   }, [currentPage?.id, treeData]);
 
+  // Show up to this many real page crumbs before collapsing the middle
+  // ones behind the "..." popover. First page + last (MAX_VISIBLE_CRUMBS - 1)
+  // pages stay visible, matching the slice used below in getBreadcrumbItems.
+  const MAX_VISIBLE_CRUMBS = 5;
+
+  const getHiddenNodes = () => {
+    if (!breadcrumbNodes || breadcrumbNodes.length <= MAX_VISIBLE_CRUMBS) {
+      return [];
+    }
+    const tailCount = MAX_VISIBLE_CRUMBS - 1;
+    return breadcrumbNodes.slice(1, breadcrumbNodes.length - tailCount);
+  };
+
   const HiddenNodesTooltipContent = () =>
-    breadcrumbNodes?.slice(1, -1).map((node) => (
+    getHiddenNodes().map((node) => (
       <Button.Group orientation="vertical" key={node.id}>
         <Button
           justify="start"
@@ -105,10 +118,9 @@ export default function Breadcrumb() {
   const getBreadcrumbItems = () => {
     if (!breadcrumbNodes) return [];
 
-    if (breadcrumbNodes.length > 3) {
+    if (breadcrumbNodes.length > MAX_VISIBLE_CRUMBS) {
       const firstNode = breadcrumbNodes[0];
-      //const secondLastNode = breadcrumbNodes[breadcrumbNodes.length - 2];
-      const lastNode = breadcrumbNodes[breadcrumbNodes.length - 1];
+      const tailNodes = breadcrumbNodes.slice(-(MAX_VISIBLE_CRUMBS - 1));
 
       return [
         renderAnchor(firstNode),
@@ -132,8 +144,10 @@ export default function Breadcrumb() {
             <HiddenNodesTooltipContent />
           </Popover.Dropdown>
         </Popover>,
-        //renderAnchor(secondLastNode),
-        renderAnchor(lastNode, true),
+        ...tailNodes
+          .slice(0, -1)
+          .map((node) => renderAnchor(node)),
+        renderAnchor(tailNodes[tailNodes.length - 1], true),
       ];
     }
 
